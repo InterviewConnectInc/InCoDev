@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Interview Connect - Login</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+background: linear-gradient(135deg, #0066CC 0%, #004A99 100%);
+min-height: 100vh;
+display: flex;
+align-items: center;
+justify-content: center;
+padding: 20px;
+overflow-x: hidden;
+}
+
+.login-wrapper {
+display: flex;
+width: 100%;
+max-width: 1200px;
+min-height: 600px;
+background: white;
+border-radius: 20px;
+box-shadow: 0 25px 80px rgba(0, 0, 0, 0.15);
+overflow: hidden;
+animation: slideUp 0.8s ease-out;
+}
+
+@keyframes slideUp {
+from {
+opacity: 0;
+transform: translateY(30px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+.login-left {
+flex: 1;
+background: linear-gradient(135deg, #0066CC 0%, #004A99 100%);
+display: flex;
+flex-direction: column;
+justify-content: center;
+align-items: center;
+color: white;
+padding: 60px;
+position: relative;
+overflow: hidden;
+}
+
+.login-left::before {
+content: '';
+position: absolute;
+width: 200%;
+height: 200%;
+background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="2" fill="rgba(255,255,255,0.1)"/></svg>') repeat;
+animation: float 20s linear infinite;
+}
+
+@keyframes float {
+0% { transform: translate(-50%, -50%); }
+100% { transform: translate(-50%, -60%); }
+}
+
+.hero-content {
+position: relative;
+z-index: 2;
+text-align: center;
+max-width: 400px;
+}
+
+.logo-container {
+display: flex;
+align-items: center;
+justify-content: center;
+margin-bottom: 30px;
+}
+
+.logo-container svg {
+width: 200px;
+height: 80px;
+margin-bottom: 10px;
+filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+}
+
+.hero-content h1 {
+font-size: 2.5rem;
+margin-bottom: 20px;
+font-weight: 700;
+line-height: 1.1;
+}
+
+.hero-content p {
+font-size: 1.1rem;
+opacity: 0.9;
+line-height: 1.6;
+}
+
+.login-right {
+flex: 1;
+display: flex;
+flex-direction: column;
+justify-content: center;
+padding: 60px;
+background: #fafbfc;
+}
+
+.login-form-container {
+max-width: 400px;
+margin: 0 auto;
+width: 100%;
+}
+
+.login-header {
+text-align: center;
+margin-bottom: 40px;
+}
+
+.login-header h2 {
+font-size: 2rem;
+color: #333;
+margin-bottom: 10px;
+font-weight: 600;
+}
+
+.login-header p {
+color: #666;
+font-size: 1rem;
+}
+
+.form-group {
+margin-bottom: 25px;
+}
+
+.form-group label {
+display: block;
+margin-bottom: 8px;
+font-weight: 600;
+color: #333;
+font-size: 1rem;
+}
+
+.form-group input {
+width: 100%;
+padding: 16px 20px;
+border: 2px solid #e1e5e9;
+border-radius: 12px;
+font-size: 16px;
+transition: all 0.3s ease;
+background: white;
+}
+
+.form-group input:focus {
+outline: none;
+border-color: #0066CC;
+box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+transform: translateY(-1px);
+}
+
+.login-btn {
+width: 100%;
+background: linear-gradient(135deg, #0066CC 0%, #004A99 100%);
+color: white;
+border: none;
+padding: 18px;
+border-radius: 12px;
+font-size: 16px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+margin-top: 10px;
+position: relative;
+overflow: hidden;
+}
+
+.login-btn:hover {
+transform: translateY(-2px);
+box-shadow: 0 15px 35px rgba(0, 102, 204, 0.4);
+background: linear-gradient(135deg, #0052A3 0%, #003D80 100%);
+}
+
+.login-btn:active {
+transform: translateY(0);
+}
+
+.login-btn:disabled {
+background: #d1d5db;
+cursor: not-allowed;
+transform: none;
+}
+
+.error-message, .success-message {
+padding: 15px;
+border-radius: 10px;
+margin-bottom: 20px;
+display: none;
+font-weight: 500;
+}
+
+.error-message {
+background: #ffe6e6;
+color: #cc0000;
+border: 1px solid #ffcccc;
+}
+
+.success-message {
+background: #e6ffe6;
+color: #006600;
+border: 1px solid #ccffcc;
+}
+
+/* New styles for signup section */
+.divider-section {
+text-align: center;
+margin: 30px 0;
+position: relative;
+}
+
+.divider-text {
+background: #fafbfc;
+padding: 0 15px;
+color: #999;
+font-size: 0.9rem;
+position: relative;
+display: inline-block;
+}
+
+.divider-section::before {
+content: '';
+position: absolute;
+top: 50%;
+left: 0;
+right: 0;
+height: 1px;
+background: #e1e5e9;
+z-index: 0;
+}
+
+.signup-section {
+text-align: center;
+margin-top: 25px;
+padding-top: 25px;
+border-top: 1px solid #e1e5e9;
+}
+
+.signup-text {
+color: #666;
+font-size: 1rem;
+margin-bottom: 15px;
+}
+
+.create-account-btn {
+width: 100%;
+background: transparent;
+color: #0066CC;
+border: 2px solid #0066CC;
+padding: 16px;
+border-radius: 12px;
+font-size: 16px;
+font-weight: 600;
+cursor: pointer;
+transition: all 0.3s ease;
+text-decoration: none;
+display: inline-block;
+text-align: center;
+}
+
+.create-account-btn:hover {
+background: #0066CC;
+color: white;
+transform: translateY(-2px);
+box-shadow: 0 10px 25px rgba(0, 102, 204, 0.3);
+}
+
+.create-account-btn:active {
+transform: translateY(0);
+}
+
+.benefits-list {
+list-style: none;
+padding: 0;
+margin: 20px 0;
+text-align: left;
+}
+
+.benefits-list li {
+color: #666;
+font-size: 0.9rem;
+margin-bottom: 10px;
+padding-left: 25px;
+position: relative;
+}
+
+.benefits-list li::before {
+content: '✓';
+color: #0066CC;
+font-weight: bold;
+position: absolute;
+left: 0;
+}
+
+@media (max-width: 768px) {
+.login-wrapper {
+flex-direction: column;
+height: auto;
+margin: 10px;
+}
+
+.login-left {
+padding: 40px 30px;
+}
+
+.hero-content h1 {
+font-size: 2rem;
+}
+
+.login-right {
+padding: 40px 30px;
+}
+}
+</style>
+</head>
+<body>
+<div class="login-wrapper">
+<div class="login-left">
+<div class="hero-content">
+<div class="logo-container">
+<!-- InCo Logo -->
+<svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+<text x="10" y="60" style="font-family: Arial, sans-serif; font-size: 60px; font-weight: bold; fill: white;">
+In<tspan style="fill: white;">Co</tspan>
+</text>
+</svg>
+</div>
+<h1>Interview Connect</h1>
+<p>Automate your job applications with our advanced AI-powered assistant. Apply to multiple platforms with precision and efficiency.</p>
+</div>
+</div>
+
+<div class="login-right">
+<div class="login-form-container">
+<div class="login-header">
+<h2>Welcome Back</h2>
+<p>Sign in to your Interview Connect account</p>
+</div>
+
+<div id="errorMessage" class="error-message"></div>
+<div id="successMessage" class="success-message"></div>
+
+<form id="loginForm">
+<div class="form-group">
+<label for="email">Email Address:</label>
+<input type="email" id="email" name="email" required placeholder="Enter your email">
+</div>
+
+<div class="form-group">
+<label for="password">Password:</label>
+<input type="password" id="password" name="password" required placeholder="Enter your password">
+</div>
+
+<button type="submit" class="login-btn">
+Sign In to Interview Connect
+</button>
+</form>
+
+<!-- New signup section -->
+<div class="signup-section">
+<p class="signup-text">New to Interview Connect?</p>
+<a href="/onboarding" class="create-account-btn">
+Create Your Account
+</a>
+<ul class="benefits-list">
+<li>Automated job applications</li>
+<li>AI-powered resume optimization</li>
+<li>Multi-platform integration</li>
+</ul>
+</div>
+
+<script>
+// Auto-focus email field
+document.getElementById('email').focus();
+
+// Login form handling
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+e.preventDefault();
+
+const email = document.getElementById('email').value;
+const password = document.getElementById('password').value;
+
+const errorDiv = document.getElementById('errorMessage');
+const successDiv = document.getElementById('successMessage');
+const submitBtn = e.target.querySelector('button[type="submit"]');
+
+// Hide previous messages
+errorDiv.style.display = 'none';
+successDiv.style.display = 'none';
+
+// Show loading state
+const originalText = submitBtn.textContent;
+submitBtn.textContent = 'Signing In...';
+submitBtn.disabled = true;
+
+try {
+const response = await fetch('/login', {
+method: 'POST',
+headers: {
+'Content-Type': 'application/json',
+},
+body: JSON.stringify({ email, password })
+});
+
+const result = await response.json();
+
+if (response.ok && result.status === 'success') {
+// Store user info in sessionStorage for client-side use
+const sessionData = {
+user: {
+email: result.user,
+name: result.user.split('@')[0].charAt(0).toUpperCase() + result.user.split('@')[0].slice(1),
+tier: result.tier,
+resume_limit: result.resume_limit
+},
+loginTime: new Date().toISOString(),
+isAuthenticated: true
+};
+sessionStorage.setItem('userSession', JSON.stringify(sessionData));
+
+// Update success message to mention dashboard
+successDiv.textContent = result.message || 'Login successful! Redirecting to dashboard...';
+successDiv.style.display = 'block';
+
+// Redirect to dashboard (or use redirect from server response)
+setTimeout(() => {
+// Use the redirect URL from response if provided, otherwise default to dashboard
+window.location.href = result.redirect || '/dashboard';
+}, 1500);
+} else {
+errorDiv.textContent = result.message || 'Login failed. Please try again.';
+errorDiv.style.display = 'block';
+
+// Reset button
+submitBtn.textContent = originalText;
+submitBtn.disabled = false;
+}
+} catch (error) {
+console.error('Login error:', error);
+errorDiv.textContent = 'Connection error. Please check your internet connection and try again.';
+errorDiv.style.display = 'block';
+
+// Reset button
+submitBtn.textContent = originalText;
+submitBtn.disabled = false;
+}
+});
+
+// Quick login functionality for demo accounts
+document.querySelectorAll('.demo-account').forEach(account => {
+account.addEventListener('click', function() {
+const credentials = this.querySelector('.credentials').textContent;
+const emailMatch = credentials.match(/Email: (.+)/);
+const passwordMatch = credentials.match(/Password: (.+)/);
+
+if (emailMatch && passwordMatch) {
+document.getElementById('email').value = emailMatch[1].trim();
+document.getElementById('password').value = passwordMatch[1].trim();
+
+// Add visual feedback
+this.style.background = '#e3f2fd';
+setTimeout(() => {
+this.style.background = 'white';
+}, 200);
+}
+});
+});
+</script>
+</body>
+</html>

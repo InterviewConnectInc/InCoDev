@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application Assistant - Interview Connect</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0066CC 0%, #004A99 100%);
+            min-height: 100vh;
+            display: flex;
+        }
+        .app-container { display: flex; width: 100%; height: 100vh; }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; z-index: 1000;
+        }
+        .sidebar-header {
+            padding: 30px 25px; border-bottom: 1px solid #e1e5e9;
+            background: linear-gradient(135deg, #0066CC 0%, #004A99 100%); color: white;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .logo-container svg {
+            width: 120px;
+            height: 50px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        .sidebar-header h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 5px; }
+        .sidebar-header p { font-size: 0.9rem; opacity: 0.9; }
+        .tier-badge {
+            display: inline-block; padding: 4px 8px; border-radius: 12px;
+            font-size: 0.8rem; font-weight: 600; margin-top: 5px;
+            background: rgba(255,255,255,0.2); color: white;
+        }
+        .sidebar-nav { flex: 1; padding: 20px 0; }
+        .nav-item {
+            display: block; padding: 15px 25px; color: #666; text-decoration: none;
+            font-weight: 500; transition: all 0.3s ease; border-left: 3px solid transparent;
+        }
+        .nav-item:hover { background: #E6F2FF; color: #0066CC; border-left-color: #0066CC; }
+        .nav-item.active { background: #E6F2FF; color: #0066CC; border-left-color: #0066CC; font-weight: 600; }
+        
+        /* Main Content */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .top-bar {
+            background: white; padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .page-title { font-size: 1.5rem; font-weight: 600; color: #333; }
+        .logout-btn {
+            background: linear-gradient(135deg, #0066CC 0%, #004A99 100%);
+            color: white; border: none; padding: 10px 20px; border-radius: 8px;
+            font-weight: 500; cursor: pointer; transition: all 0.3s ease;
+        }
+        .logout-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
+            background: linear-gradient(135deg, #0052A3 0%, #003D80 100%);
+        }
+        
+        .content-area { flex: 1; padding: 30px; overflow-y: auto; background: #fafbfc; }
+        .content-wrapper {
+            max-width: 800px; margin: 0 auto; background: white; border-radius: 15px;
+            padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .form-header { text-align: center; margin-bottom: 40px; }
+        .form-header h1 { font-size: 2rem; color: #333; margin-bottom: 10px; font-weight: 600; }
+        .form-header p { color: #666; font-size: 1.1rem; }
+        
+        /* Resume Upload Section */
+        .upload-section {
+            border: 2px dashed #0066CC; border-radius: 12px; padding: 40px;
+            text-align: center; margin-bottom: 30px; background: #E6F2FF;
+        }
+        .upload-section h3 { color: #333; margin-bottom: 20px; font-size: 1.2rem; }
+        .file-input { display: none; }
+        .file-input-label {
+            display: inline-block; background: #0066CC; color: white; padding: 12px 24px;
+            border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;
+        }
+        .file-input-label:hover { background: #0052A3; transform: translateY(-1px); }
+        .file-selected { color: #28a745; font-weight: 500; margin-top: 10px; }
+        .upload-info { color: #666; font-size: 0.9rem; margin-top: 10px; }
+        
+        /* Form Sections */
+        .form-section { margin-bottom: 40px; }
+        .section-title {
+            font-size: 1.3rem; font-weight: 600; color: #333; margin-bottom: 20px;
+            border-bottom: 2px solid #0066CC; padding-bottom: 10px;
+        }
+        .form-row { display: flex; gap: 20px; margin-bottom: 20px; }
+        .form-group { flex: 1; }
+        .form-group label {
+            display: block; margin-bottom: 8px; font-weight: 600; color: #333;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%; padding: 12px 16px; border: 2px solid #e1e5e9; border-radius: 8px;
+            font-size: 14px; transition: border-color 0.3s ease; background: white;
+        }
+        .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
+            outline: none; border-color: #0066CC; background: white;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+        
+        /* Platform Selection */
+        .platform-options {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 15px; margin-bottom: 25px;
+        }
+        .platform-option { position: relative; }
+        .platform-option input[type="checkbox"] { display: none; }
+        .platform-label {
+            display: flex; align-items: center; padding: 20px; border: 2px solid #e1e5e9;
+            border-radius: 12px; cursor: pointer; transition: all 0.3s ease; background: white;
+        }
+        .platform-label:hover { border-color: #0066CC; transform: translateY(-2px); }
+        .platform-option input[type="checkbox"]:checked + .platform-label {
+            border-color: #0066CC; background: linear-gradient(135deg, #E6F2FF 0%, #CCE0FF 100%);
+        }
+        .platform-option input[type="checkbox"]:checked + .platform-label::after {
+            content: '✓'; position: absolute; top: 10px; right: 15px; background: #0066CC;
+            color: white; width: 24px; height: 24px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-size: 12px;
+        }
+        .platform-icon {
+            font-size: 2.5rem; margin-right: 15px; width: 60px; height: 60px;
+            display: flex; align-items: center; justify-content: center; border-radius: 12px;
+            background: #f8f9fa; font-weight: bold;
+        }
+        .indeed-icon { background: linear-gradient(135deg, #2557a7 0%, #1e4a99 100%); color: white; }
+        .dice-icon { background: linear-gradient(135deg, #ff6b35 0%, #f7931e 100%); color: white; }
+        .glassdoor-icon { background: linear-gradient(135deg, #0caa41 0%, #0a8a35 100%); color: white; }
+        .ziprecruiter-icon { background: linear-gradient(135deg, #1976d2 0%, #1565c0 100%); color: white; }
+        .platform-info { flex: 1; }
+        .platform-info h3 { margin: 0 0 5px 0; font-size: 1.2rem; color: #333; }
+        .platform-info p { margin: 0 0 8px 0; color: #666; font-size: 0.9rem; }
+        .platform-status {
+            display: inline-block; padding: 4px 8px; border-radius: 6px;
+            font-size: 0.75rem; font-weight: 600; text-transform: uppercase;
+        }
+        .platform-status.active { background: #e6f7e6; color: #0a7c0a; }
+        .platform-status.coming-soon { background: #fff3cd; color: #856404; }
+        
+        /* Run Button */
+        .run-assistant-section { text-align: center; margin-top: 40px; padding: 30px; border-top: 2px solid #e1e5e9; }
+        .run-assistant-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;
+            border: none; padding: 18px 40px; border-radius: 12px; font-size: 1.1rem;
+            font-weight: 600; cursor: pointer; transition: all 0.3s ease;
+        }
+        .run-assistant-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+        }
+        .run-assistant-btn:disabled { background: #d1d5db; cursor: not-allowed; }
+        
+        /* Status Messages */
+        .status-message {
+            margin-top: 20px; padding: 15px; border-radius: 8px; display: none;
+        }
+        .status-message.show { display: block; }
+        .status-message.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .status-message.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        
+        @media (max-width: 768px) {
+            .app-container { flex-direction: column; }
+            .sidebar { width: 100%; order: 2; }
+            .main-content { order: 1; }
+            .form-row { flex-direction: column; }
+            .platform-options { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <!-- InCo Logo -->
+                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                        <text x="10" y="60" style="font-family: Arial, sans-serif; font-size: 60px; font-weight: bold; fill: white;">
+                            In<tspan style="fill: white;">Co</tspan>
+                        </text>
+                    </svg>
+                </div>
+                <h2>Welcome, {{ user_email.split('@')[0].title() }}</h2>
+                <p>{{ user_email }}</p>
+                <div class="tier-badge">{{ user_tier.title() }} - {{ resume_limit }} Resume{{ 's' if resume_limit > 1 else '' }}</div>
+            </div>
+            <nav class="sidebar-nav">
+                 <a href="/dashboard" class="nav-item">Dashboard</a>
+                <a href="/application-assistant" class="nav-item active">Application Assistant</a>
+                <a href="/job-board-assistant" class="nav-item">Job Board Assistant</a>
+                <a href="/resume-assistant" class="nav-item">Resume Assistant Coming Soon!</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h1 class="page-title">Application Assistant</h1>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="content-area">
+                <div class="content-wrapper">
+                    <div class="form-header">
+                        <h1>Multi-Platform Application Assistant</h1>
+                        <p>Upload your resume and apply to multiple job platforms automatically</p>
+                    </div>
+
+                    <form id="applicationForm">
+                        <!-- Resume Upload Section -->
+                        <div class="upload-section">
+                            <h3>Resume Upload & Parsing</h3>
+                            <div class="file-input-wrapper">
+                                <input type="file" id="resumeFile" class="file-input" accept=".pdf,.doc,.docx">
+                                <label for="resumeFile" class="file-input-label">Choose Resume File</label>
+                                <div class="file-selected" id="fileSelected" style="display: none;"></div>
+                            </div>
+                            <div class="upload-info">Upload your resume to auto-fill personal information</div>
+                        </div>
+
+                        <!-- Basic Information -->
+                        <div class="form-section">
+                            <h2 class="section-title">Personal Information</h2>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="firstName">First Name:</label>
+                                    <input type="text" id="firstName" name="firstName" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="lastName">Last Name:</label>
+                                    <input type="text" id="lastName" name="lastName" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="email">Email:</label>
+                                    <input type="email" id="email" name="email" required>
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone:</label>
+                                    <input type="tel" id="phone" name="phone" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="dob">Date of Birth:</label>
+                                    <input type="date" id="dob" name="dob">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Address Information -->
+                        <div class="form-section">
+                            <h2 class="section-title">Address Information</h2>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="street">Street Address:</label>
+                                    <input type="text" id="street" name="street" placeholder="123 Main Street">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="city">City:</label>
+                                    <input type="text" id="city" name="city">
+                                </div>
+                                <div class="form-group">
+                                    <label for="state">State:</label>
+                                    <input type="text" id="state" name="state" placeholder="TX">
+                                </div>
+                                <div class="form-group">
+                                    <label for="zipCode">ZIP Code:</label>
+                                    <input type="text" id="zipCode" name="zipCode" placeholder="12345">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Professional Information -->
+                        <div class="form-section">
+                            <h2 class="section-title">Professional Information</h2>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="jobTitle">Job Title (Position Seeking):</label>
+                                    <input type="text" id="jobTitle" name="jobTitle" placeholder="e.g., Software Engineer, Data Analyst, Project Manager" required>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="location">Preferred Job Location:</label>
+                                    <input type="text" id="location" name="location" placeholder="e.g., Houston, TX, USA or Remote">
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label for="skills">Skills (comma separated):</label>
+                                <textarea id="skills" name="skills" placeholder="JavaScript, Project Management, Communication" rows="3"></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label for="certifications">Certifications (comma separated):</label>
+                                <textarea id="certifications" name="certifications" placeholder="Google Analytics Certified, PMP" rows="3"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Platform Selection -->
+                        <div class="form-section">
+                            <h2 class="section-title">Job Platforms</h2>
+                            <p>Select which platforms to apply to:</p>
+                            <div class="platform-options">
+                                <div class="platform-option">
+                                    <input type="checkbox" id="platform-indeed" name="platforms" value="indeed" checked>
+                                    <label for="platform-indeed" class="platform-label">
+                                        <div class="platform-icon indeed-icon">I</div>
+                                        <div class="platform-info">
+                                            <h3>Indeed</h3>
+                                            <p>World's largest job board</p>
+                                            <span class="platform-status active">Active</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="platform-option">
+                                    <input type="checkbox" id="platform-dice" name="platforms" value="dice" checked>
+                                    <label for="platform-dice" class="platform-label">
+                                        <div class="platform-icon dice-icon">D</div>
+                                        <div class="platform-info">
+                                            <h3>Dice</h3>
+                                            <p>Tech & IT focused jobs</p>
+                                            <span class="platform-status active">Active</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="platform-option">
+                                    <input type="checkbox" id="platform-glassdoor" name="platforms" value="glassdoor">
+                                    <label for="platform-glassdoor" class="platform-label">
+                                        <div class="platform-icon glassdoor-icon">G</div>
+                                        <div class="platform-info">
+                                            <h3>Glassdoor</h3>
+                                            <p>Company reviews & jobs</p>
+                                            <span class="platform-status coming-soon">Coming Soon</span>
+                                        </div>
+                                    </label>
+                                </div>
+                                <div class="platform-option">
+                                    <input type="checkbox" id="platform-ziprecruiter" name="platforms" value="ziprecruiter">
+                                    <label for="platform-ziprecruiter" class="platform-label">
+                                        <div class="platform-icon ziprecruiter-icon">Z</div>
+                                        <div class="platform-info">
+                                            <h3>ZipRecruiter</h3>
+                                            <p>One-click apply jobs</p>
+                                            <span class="platform-status coming-soon">Coming Soon</span>
+                                        </div>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- EEOC Information -->
+                        <div class="form-section">
+                            <h2 class="section-title">EEOC Information</h2>
+                            <p style="color: #666; margin-bottom: 20px;">This information is used for diversity reporting purposes only.</p>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="race">Race/Ethnicity:</label>
+                                    <select id="race" name="race">
+                                        <option value="">Select Race/Ethnicity</option>
+                                        <option value="white">White</option>
+                                        <option value="black">Black or African American</option>
+                                        <option value="hispanic">Hispanic or Latino</option>
+                                        <option value="asian">Asian</option>
+                                        <option value="native-american">American Indian or Alaska Native</option>
+                                        <option value="pacific-islander">Native Hawaiian or Other Pacific Islander</option>
+                                        <option value="two-or-more">Two or More Races</option>
+                                        <option value="prefer-not-to-say">Prefer not to say</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="gender">Gender:</label>
+                                    <select id="gender" name="gender">
+                                        <option value="">Select Gender</option>
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                        <option value="non-binary">Non-binary</option>
+                                        <option value="prefer-not-to-say">Prefer not to say</option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="veteranStatus">Veteran Status:</label>
+                                    <select id="veteranStatus" name="veteranStatus">
+                                        <option value="">Select Veteran Status</option>
+                                        <option value="not-protected-veteran">I am not a protected veteran</option>
+                                        <option value="protected-veteran">I am a protected veteran</option>
+                                        <option value="prefer-not-to-say">Prefer not to say</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="disabilityStatus">Disability Status:</label>
+                                    <select id="disabilityStatus" name="disabilityStatus">
+                                        <option value="">Select Disability Status</option>
+                                        <option value="no-disability">No, I do not have a disability</option>
+                                        <option value="has-disability">Yes, I have a disability</option>
+                                        <option value="prefer-not-to-say">Prefer not to say</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Run Button -->
+                        <div class="run-assistant-section">
+                            <button type="button" class="run-assistant-btn" onclick="runApplicationAssistant()">
+                                🚀 Run Application Assistant
+                            </button>
+                            <p style="color: #666; margin-top: 15px;">Start automated applications to selected platforms</p>
+                        </div>
+
+                        <div class="status-message" id="statusMessage"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // File upload handling
+        document.getElementById('resumeFile').addEventListener('change', function(e) {
+            const fileSelected = document.getElementById('fileSelected');
+            if (e.target.files.length > 0) {
+                fileSelected.style.display = 'block';
+                fileSelected.textContent = '📎 ' + e.target.files[0].name + ' selected';
+                
+                // Auto-parse resume
+                parseResume();
+            } else {
+                fileSelected.style.display = 'none';
+            }
+        });
+
+        function parseResume() {
+            const fileInput = document.getElementById('resumeFile');
+            if (fileInput.files.length === 0) return;
+
+            const formData = new FormData();
+            formData.append('resume', fileInput.files[0]);
+
+            fetch('/parse_resume', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Auto-fill form fields
+                    const parsed = data.data;
+                    document.getElementById('firstName').value = parsed.firstName || '';
+                    document.getElementById('lastName').value = parsed.lastName || '';
+                    document.getElementById('email').value = parsed.email || '';
+                    document.getElementById('phone').value = parsed.phone || '';
+                    document.getElementById('city').value = parsed.city || '';
+                    document.getElementById('state').value = parsed.state || '';
+                    document.getElementById('zipCode').value = parsed.zipCode || '';
+                    document.getElementById('jobTitle').value = parsed.jobTitle || '';
+                    document.getElementById('skills').value = parsed.skills || '';
+                    document.getElementById('certifications').value = parsed.certifications || '';
+                    
+                    showStatus('✅ Resume parsed successfully! Form fields auto-filled.', 'success');
+                } else {
+                    showStatus('⚠️ Resume parsing failed: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                showStatus('❌ Error parsing resume', 'error');
+            });
+        }
+
+        function showStatus(message, type) {
+            const status = document.getElementById('statusMessage');
+            status.innerHTML = message;
+            status.className = `status-message show ${type}`;
+        }
+
+        function runApplicationAssistant() {
+            const btn = document.querySelector('.run-assistant-btn');
+            const form = document.getElementById('applicationForm');
+            const formData = new FormData(form);
+            
+            // Get selected platforms
+            const selectedPlatforms = Array.from(document.querySelectorAll('input[name="platforms"]:checked'))
+                .map(cb => cb.value);
+            
+            if (selectedPlatforms.length === 0) {
+                showStatus('❌ Please select at least one platform', 'error');
+                return;
+            }
+            
+            // Validate required fields
+            const required = ['firstName', 'lastName', 'email', 'phone', 'jobTitle'];
+            const missing = required.filter(field => !document.getElementById(field).value.trim());
+            
+            if (missing.length > 0) {
+                showStatus('❌ Please fill in required fields: ' + missing.join(', '), 'error');
+                return;
+            }
+            
+            btn.disabled = true;
+            btn.textContent = 'Starting...';
+            
+            // Convert FormData to JSON
+            const data = {};
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            data.platforms = selectedPlatforms;
+            
+            // Get search parameters
+            const jobTitle = document.getElementById('jobTitle').value;
+            const location = document.getElementById('location').value || `${document.getElementById('city').value}, ${document.getElementById('state').value}`.trim();
+            
+            // Display search info
+            showStatus(`🔍 Starting search for "${jobTitle}" positions${location ? ` in ${location}` : ''} on ${selectedPlatforms.length} platform(s)...`, 'success');
+            
+            fetch('/start_application_assistant', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    let statusMsg = `✅ Application Assistant started! Searching for "${jobTitle}"`;
+                    if (result.data.location) {
+                        statusMsg += ` in ${result.data.location}`;
+                    }
+                    statusMsg += ` on ${result.data.platforms.join(', ')}`;
+                    showStatus(statusMsg, 'success');
+                    btn.textContent = '🔄 Assistant Running';
+                    btn.style.background = '#ffc107';
+                } else {
+                    showStatus('❌ Failed to start: ' + result.message, 'error');
+                    btn.disabled = false;
+                    btn.textContent = '🚀 Run Application Assistant';
+                }
+            })
+            .catch(error => {
+                showStatus('❌ Connection error', 'error');
+                btn.disabled = false;
+                btn.textContent = '🚀 Run Application Assistant';
+            });
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/logout').then(() => window.location.href = '/');
+            }
+        }
+    </script>
+</body>
+</html>

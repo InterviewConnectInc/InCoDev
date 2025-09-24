@@ -1,0 +1,1648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Get Started - Interview Connect</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #0066CC 0%, #004A99 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .onboarding-wrapper {
+            display: flex;
+            max-width: 1200px;
+            width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.15);
+            overflow: hidden;
+            min-height: 600px;
+            animation: slideUp 0.8s ease-out;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .onboarding-left {
+            flex: 1;
+            background: linear-gradient(135deg, #0066CC 0%, #004A99 100%);
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            color: white;
+            position: relative;
+        }
+
+        .onboarding-left::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="0.5"/></pattern></defs><rect width="100" height="100" fill="url(%23grid)"/></svg>');
+            opacity: 0.3;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .logo-container svg {
+            width: 200px;
+            height: 80px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            max-width: 400px;
+        }
+
+        .hero-content h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+
+        .hero-content p {
+            font-size: 1.1rem;
+            line-height: 1.6;
+            opacity: 0.9;
+            margin-bottom: 30px;
+        }
+
+        .progress-indicator {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 40px;
+        }
+
+        .progress-step {
+            width: 30px;
+            height: 4px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 2px;
+            transition: all 0.3s ease;
+        }
+
+        .progress-step.active {
+            background: white;
+        }
+
+        .progress-text {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-left: 10px;
+        }
+
+        .onboarding-right {
+            flex: 1;
+            padding: 60px 50px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            background: #fafbfc;
+        }
+
+        .onboarding-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .onboarding-header h2 {
+            font-size: 2rem;
+            color: #333;
+            margin-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .onboarding-header p {
+            color: #666;
+            font-size: 1rem;
+            line-height: 1.5;
+        }
+
+        .steps-container {
+            position: relative;
+            overflow: hidden;
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .step {
+            position: absolute;
+            width: 100%;
+            transform: translateX(100%);
+            transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            opacity: 0;
+        }
+
+        .step.active {
+            position: relative;
+            transform: translateX(0);
+            opacity: 1;
+        }
+
+        .step.exiting {
+            transform: translateX(-100%);
+            opacity: 0;
+        }
+
+        .form-container {
+            max-width: 400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #333;
+            font-size: 0.95rem;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5e9;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #0066CC;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+
+        .continue-btn {
+            width: 100%;
+            padding: 16px;
+            background: linear-gradient(135deg, #0066CC 0%, #004A99 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .continue-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0, 102, 204, 0.3);
+            background: linear-gradient(135deg, #0052A3 0%, #003D80 100%);
+        }
+
+        .continue-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .back-btn {
+            width: 100%;
+            padding: 16px;
+            background: transparent;
+            color: #0066CC;
+            border: 2px solid #0066CC;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-bottom: 15px;
+        }
+
+        .back-btn:hover {
+            background: #0066CC;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .password-requirements {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+        }
+
+        .password-requirements h4 {
+            color: #495057;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .password-requirements ul {
+            margin: 0;
+            padding-left: 18px;
+            color: #6c757d;
+        }
+
+        .password-requirements li {
+            margin-bottom: 4px;
+        }
+
+        .requirement {
+            color: #dc3545;
+        }
+
+        .requirement.valid {
+            color: #28a745;
+        }
+
+        .location-hint {
+            background: #E6F2FF;
+            border: 1px solid #CCE0FF;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 10px;
+            font-size: 0.85rem;
+            color: #004A99;
+        }
+
+        .optional-section {
+            background: #E6F2FF;
+            border: 1px solid #0066CC;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 25px;
+        }
+
+        .optional-section h4 {
+            color: #0066CC;
+            font-size: 1rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .checkbox-group input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            margin-right: 10px;
+            cursor: pointer;
+        }
+
+        .checkbox-group label {
+            margin-bottom: 0;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .legal-section {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .legal-section h3 {
+            color: #495057;
+            font-size: 1.3rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .legal-checkbox {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+
+        .legal-checkbox:hover {
+            border-color: #0066CC;
+            background: #E6F2FF;
+        }
+
+        .legal-checkbox.checked {
+            border-color: #28a745;
+            background: #f8fff9;
+        }
+
+        .legal-checkbox input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+            margin-top: 2px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .legal-text {
+            flex: 1;
+        }
+
+        .legal-text label {
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .legal-description {
+            font-size: 0.9rem;
+            color: #6c757d;
+            line-height: 1.4;
+        }
+
+        .legal-link {
+            color: #0066CC;
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .legal-link:hover {
+            text-decoration: underline;
+        }
+
+        .submit-section {
+            text-align: center;
+            margin-top: 30px;
+        }
+
+        .continue-btn:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+            background: #6c757d;
+        }
+
+        .upload-section {
+            background: #E6F2FF;
+            border: 2px dashed #0066CC;
+            border-radius: 12px;
+            padding: 40px 20px;
+            text-align: center;
+            margin-bottom: 25px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .upload-section:hover {
+            border-color: #004A99;
+            background: #CCE0FF;
+        }
+
+        .upload-section.dragover {
+            border-color: #28a745;
+            background: #f8fff9;
+        }
+
+        .upload-icon {
+            width: 48px;
+            height: 48px;
+            margin: 0 auto 15px;
+            opacity: 0.7;
+        }
+
+        .upload-text h4 {
+            color: #0066CC;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .upload-text p {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+        }
+
+        .upload-btn {
+            background: #0066CC;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .upload-btn:hover {
+            background: #0052A3;
+            transform: translateY(-1px);
+        }
+
+        .file-info {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+            display: none;
+        }
+
+        .file-info.show {
+            display: block;
+        }
+
+        .file-name {
+            font-weight: 600;
+            color: #155724;
+            margin-bottom: 5px;
+        }
+
+        .file-size {
+            font-size: 0.85rem;
+            color: #155724;
+        }
+
+        .remove-file {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        .remove-file:hover {
+            background: #c82333;
+        }
+
+        .resume-hint {
+            background: #FFF4E6;
+            border: 1px solid #FFD4A3;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 25px;
+            font-size: 0.9rem;
+            color: #7A4900;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .loading-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 60px 40px;
+        }
+
+        .spinner-container {
+            margin-bottom: 40px;
+        }
+
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid #e1e5e9;
+            border-top: 8px solid #0066CC;
+            border-radius: 50%;
+            animation: spin 1.2s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .loading-text {
+            margin-bottom: 30px;
+        }
+
+        .loading-text h3 {
+            color: #333;
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .loading-message {
+            color: #0066CC;
+            font-size: 1.1rem;
+            font-weight: 500;
+            min-height: 1.5em;
+            transition: all 0.3s ease;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            max-width: 300px;
+            height: 8px;
+            background: #e1e5e9;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 20px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #0066CC, #004A99);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+
+        .loading-details {
+            color: #6c757d;
+            font-size: 0.9rem;
+            line-height: 1.4;
+        }
+
+        .welcome-message {
+            background: linear-gradient(135deg, #E6F2FF 0%, #CCE0FF 100%);
+            border: 1px solid #0066CC;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .welcome-message h3 {
+            color: #004A99;
+            font-size: 1.2rem;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .welcome-message p {
+            color: #004A99;
+            font-size: 0.95rem;
+            line-height: 1.4;
+        }
+
+        @media (max-width: 768px) {
+            .onboarding-wrapper {
+                flex-direction: column;
+                height: auto;
+                margin: 10px;
+            }
+
+            .onboarding-left {
+                padding: 40px 30px;
+            }
+
+            .hero-content h1 {
+                font-size: 2rem;
+            }
+
+            .onboarding-right {
+                padding: 40px 30px;
+            }
+
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="onboarding-wrapper">
+        <div class="onboarding-left">
+            <div class="hero-content">
+                <div class="logo-container">
+                    <!-- InCo Logo -->
+                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                        <text x="10" y="60" style="font-family: Arial, sans-serif; font-size: 60px; font-weight: bold; fill: white;">
+                            In<tspan style="fill: white;">Co</tspan>
+                        </text>
+                    </svg>
+                </div>
+                <h1>Welcome to Interview Connect</h1>
+                <p>You're about to transform your job search with AI-powered automation. We'll apply to hundreds of relevant positions while you focus on what matters most - preparing for interviews.</p>
+                
+                <div class="progress-indicator">
+                    <div class="progress-step active"></div>
+                    <div class="progress-step"></div>
+                    <div class="progress-step"></div>
+                    <div class="progress-step"></div>
+                    <div class="progress-step"></div>
+                    <div class="progress-step"></div>
+                    <span class="progress-text">Step 1 of 6</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="onboarding-right">
+            <div class="onboarding-header">
+                <h2 id="stepTitle">Let's Get You Set Up</h2>
+                <p id="stepDescription">First, we need some basic information to personalize your experience</p>
+            </div>
+
+            <div class="welcome-message">
+                <h3>Congratulations on taking control of your career!</h3>
+                <p>In just a few minutes, you'll have access to powerful automation tools that will supercharge your job search.</p>
+            </div>
+
+            <div class="steps-container">
+                <!-- Step 1: Basic Information -->
+                <div class="step active" id="step1">
+                    <form id="step1Form">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="firstName">First Name *</label>
+                                <input type="text" id="firstName" name="firstName" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="lastName">Last Name *</label>
+                                <input type="text" id="lastName" name="lastName" required>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="email">Email Address *</label>
+                            <input type="email" id="email" name="email" required>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="phone">Phone Number *</label>
+                            <input type="tel" id="phone" name="phone" required>
+                        </div>
+
+                        <button type="submit" class="continue-btn" id="step1ContinueBtn">
+                            Continue
+                        </button>
+                    </form>
+                </div>
+                
+                
+                <!-- Step 2: Password -->
+                <div class="step" id="step2">
+                    <form id="step2Form">
+                        <div class="form-group">
+                            <label for="password">Create Password *</label>
+                            <input type="password" id="password" name="password" required>
+                            <div class="password-requirements">
+                                <h4>Password Requirements:</h4>
+                                <ul>
+                                    <li class="requirement" id="req-length">At least 8 characters</li>
+                                    <li class="requirement" id="req-uppercase">One uppercase letter</li>
+                                    <li class="requirement" id="req-lowercase">One lowercase letter</li>
+                                    <li class="requirement" id="req-number">One number</li>
+                                </ul>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="confirmPassword">Confirm Password *</label>
+                            <input type="password" id="confirmPassword" name="confirmPassword" required>
+                        </div>
+
+                        <button type="button" class="back-btn" id="backToStep1">
+                            Back to Previous Step
+                        </button>
+                        <button type="submit" class="continue-btn" id="step2ContinueBtn">
+                            Continue
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Step 3: Location Information -->
+                <div class="step" id="step3">
+                    <form id="step3Form">
+                        <div class="form-group">
+                            <label for="city">City *</label>
+                            <input type="text" id="city" name="city" required>
+                            <div class="location-hint">
+                                Enter the city where you want to work. This helps us target job opportunities in your preferred area.
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="state">State/Province *</label>
+                                <input type="text" id="state" name="state" required maxlength="3">
+                            </div>
+                            <div class="form-group">
+                                <label for="zipCode">ZIP/Postal Code *</label>
+                                <input type="text" id="zipCode" name="zipCode" required maxlength="10">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="streetAddress">Street Address <span style="color: #6c757d; font-weight: normal;">(Optional)</span></label>
+                            <input type="text" id="streetAddress" name="streetAddress">
+                        </div>
+
+                        <button type="button" class="back-btn" id="backToStep2">
+                            Back to Previous Step
+                        </button>
+                        <button type="submit" class="continue-btn" id="step3ContinueBtn">
+                            Continue
+                        </button>
+                    </form>
+                </div>
+
+                <!-- Step 4: Resume Upload -->
+                <div class="step" id="step4">
+                    <form id="step4Form">
+
+                        <div class="upload-section" id="uploadSection">
+                            <div class="upload-icon">
+                                <svg viewBox="0 0 24 24" fill="#0066CC" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                                </svg>
+                            </div>
+                            <div class="upload-text">
+                                <h4>Upload Your Resume</h4>
+                                <p>Drag and drop your resume here, or click to browse</p>
+                                <p>Supported formats: PDF, DOC, DOCX (Max 5MB)</p>
+                                <button type="button" class="upload-btn" id="uploadBtn">Choose File</button>
+                            </div>
+                        </div>
+
+                        <input type="file" id="file-input" accept=".pdf,.doc,.docx" />
+
+                        <div class="file-info" id="fileInfo">
+                            <div class="file-name" id="fileName"></div>
+                            <div class="file-size" id="fileSize"></div>
+                            <button type="button" class="remove-file" id="removeFile">Remove File</button>
+                        </div>
+
+                        <button type="button" class="back-btn" id="backToStep3">
+                            Back to Previous Step
+                        </button>
+                        
+                        <div style="display: flex; gap: 10px;">
+                            <button type="button" class="back-btn" id="skipResume" style="flex: 1;">
+                                Skip for Now
+                            </button>
+
+                        <button type="submit" class="continue-btn" id="step3ContinueBtn">
+                            Continue
+                        </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Step 6: Loading Screen -->
+                <div class="step" id="step6">
+                    <div class="loading-screen">
+                        <div class="spinner-container">
+                            <div class="spinner"></div>
+                        </div>
+
+                        <div class="loading-text">
+                            <h3>Setting Up Your Account</h3>
+                            <div class="loading-message" id="loadingMessage">
+                                Creating your Interview Connect account...
+                            </div>
+                        </div>
+
+                        <div class="progress-bar-container">
+                            <div class="progress-bar" id="progressBar"></div>
+                        </div>
+
+                        <div class="loading-details">
+                            <p>We're setting up your automated job search tools and creating your profiles across multiple platforms. This will only take a moment!</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Step 5: Terms & Privacy -->
+                <div class="step" id="step5">
+                    <form id="step5Form">
+                        <div class="legal-section">
+                            <h3>Legal Agreements & Consent</h3>
+                            
+                            <div class="legal-checkbox" id="tosCheckbox">
+                                <input type="checkbox" id="agreeToS" name="agreeToS" required>
+                                <div class="legal-text">
+                                    <label for="agreeToS">Terms of Service</label>
+                                    <div class="legal-description">
+                                        I agree to Interview Connect's <a href="#" class="legal-link">Terms of Service</a>, 
+                                        including the automated job application services and platform usage policies.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="legal-checkbox" id="privacyCheckbox">
+                                <input type="checkbox" id="agreePrivacy" name="agreePrivacy" required>
+                                <div class="legal-text">
+                                    <label for="agreePrivacy">Data Privacy & Protection</label>
+                                    <div class="legal-description">
+                                        I acknowledge and agree to Interview Connect's <a href="#" class="legal-link">Privacy Policy</a> 
+                                        and understand how my personal data and resume information will be used and protected.
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="legal-checkbox" id="consentCheckbox">
+                                <input type="checkbox" id="agreeConsent" name="agreeConsent" required>
+                                <div class="legal-text">
+                                    <label for="agreeConsent">Candidate Consent Form</label>
+                                    <div class="legal-description">
+                                        I provide consent for Interview Connect to apply to job opportunities on my behalf using my 
+                                        provided information. View the full <a href="#" class="legal-link">Consent Agreement</a>.
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="submit-section">
+                            <button type="button" class="back-btn" id="backToStep4">
+                                Back to Previous Step
+                            </button>
+                            <button type="submit" class="continue-btn" id="step5ContinueBtn">
+                                Complete Setup & Continue
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Onboarding data storage
+        let onboardingData = JSON.parse(sessionStorage.getItem('onboardingData')) || {};
+        let currentStep = 1;
+
+        // Auto-focus first field
+        document.getElementById('firstName').focus();
+
+        // Update progress bar
+        function updateProgress(step) {
+            const progressSteps = document.querySelectorAll('.progress-step');
+            const progressText = document.querySelector('.progress-text');
+            
+            progressSteps.forEach((stepEl, index) => {
+                if (index < step) {
+                    stepEl.classList.add('active');
+                } else {
+                    stepEl.classList.remove('active');
+                }
+            });
+            
+            progressText.textContent = `Step ${step} of 6`;
+        }
+
+        // Step transition function
+        function transitionToStep(targetStep) {
+            const currentStepEl = document.getElementById(`step${currentStep}`);
+            const targetStepEl = document.getElementById(`step${targetStep}`);
+            
+            // Update header content first
+            updateStepHeader(targetStep);
+            
+            // Force scroll to top of form area to prevent white space
+            const onboardingRight = document.querySelector('.onboarding-right');
+            if (onboardingRight) {
+                onboardingRight.scrollTop = 0;
+            }
+            
+            // Exit current step
+            if (currentStepEl) {
+                currentStepEl.classList.add('exiting');
+            }
+            
+            setTimeout(() => {
+                // Remove classes from current step
+                if (currentStepEl) {
+                    currentStepEl.classList.remove('active', 'exiting');
+                }
+                
+                // Show target step
+                if (targetStepEl) {
+                    targetStepEl.classList.add('active');
+                }
+                
+                // Force a repaint to ensure visibility
+                if (targetStepEl) {
+                    targetStepEl.offsetHeight;
+                }
+                
+                // Wait longer for elements to be fully rendered
+                setTimeout(() => {
+                    // Focus and scroll with multiple fallbacks
+                    const firstInput = targetStepEl ? targetStepEl.querySelector('input, button, .upload-btn') : null;
+                    
+                    if (firstInput) {
+                        // Force focus
+                        firstInput.focus();
+                        
+                        // Multiple scroll strategies
+                        firstInput.scrollIntoView({ 
+                            behavior: 'smooth', 
+                            block: 'center',
+                            inline: 'nearest'
+                        });
+                        
+                        // Backup scroll to container
+                        setTimeout(() => {
+                            const container = document.querySelector('.steps-container') || document.querySelector('.onboarding-right');
+                            if (container) {
+                                container.scrollIntoView({ 
+                                    behavior: 'smooth', 
+                                    block: 'start' 
+                                });
+                            }
+                        }, 100);
+                    }
+                    
+                    // Setup step-specific functionality
+                    if (targetStep === 2) {
+                        setupPasswordValidation();
+                    }
+                }, 300); // Increased delay
+                
+                currentStep = targetStep;
+                updateProgress(currentStep);
+            }, 400); // Increased transition delay
+        }
+
+        // Update step header content
+        function updateStepHeader(step) {
+            const stepTitle = document.getElementById('stepTitle');
+            const stepDescription = document.getElementById('stepDescription');
+            
+            const stepContent = {
+                1: {
+                    title: "Let's Get You Set Up",
+                    description: "First, we need some basic information to personalize your experience"
+                },
+                2: {
+                    title: "Secure Your Account",
+                    description: "Create a password to protect your account"
+                },
+                3: {
+                    title: "Location Information",
+                    description: "Help us target jobs in your preferred location"
+                },
+                4: {
+                    title: "Upload Your Resume",
+                    description: "Your resume powers our automated job applications"
+                },
+                5: {
+                    title: "Legal Agreements",
+                    description: "Review and accept our terms to complete your setup"
+                },
+                6: {
+                    title: "Almost Done!",
+                    description: "We're setting up your automation tools and job board profiles"
+                }
+            };
+            
+            stepTitle.textContent = stepContent[step].title;
+            stepDescription.textContent = stepContent[step].description;
+        }
+
+        // Step 1 form handling
+        document.getElementById('step1Form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const firstName = document.getElementById('firstName').value.trim();
+            const lastName = document.getElementById('lastName').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            
+            // Basic validation
+            if (!firstName || !lastName || !email || !phone) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            // Email validation
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+                alert('Please enter a valid email address.');
+                return;
+            }
+            
+            // Store data
+            onboardingData = {
+                ...onboardingData,
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                phone: phone
+            };
+            
+            sessionStorage.setItem('onboardingData', JSON.stringify(onboardingData));
+            
+document.getElementById('email').addEventListener('blur', function() {
+    const email = this.value.trim();
+    if (email) {
+        // Check if email is already registered
+        fetch('/onboarding/validate_email', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ email: email })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (!data.available) {
+                alert(data.message);
+                this.style.borderColor = '#dc3545';
+                
+                // Optionally redirect to login
+                if (confirm('Would you like to login instead?')) {
+                    window.location.href = '/';
+                }
+            } else {
+                this.style.borderColor = '#28a745';
+            }
+        })
+        .catch(error => {
+            console.error('Error validating email:', error);
+        });
+    }
+});
+
+
+            // Transition to step 2
+            transitionToStep(2);
+        });
+
+        // Step 2 form handling
+        document.getElementById('step2Form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            
+            // Validation
+            if (!password || !confirmPassword) {
+                alert('Please fill in all required fields.');
+                return;
+            }
+            
+            if (!isValidPassword(password)) {
+                alert('Password does not meet requirements.');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Passwords do not match.');
+                return;
+            }
+            
+            // Store data
+            onboardingData = {
+                ...onboardingData,
+                password: password
+            };
+            
+            sessionStorage.setItem('onboardingData', JSON.stringify(onboardingData));
+            
+            // Transition to step 3
+            transitionToStep(3);
+        });
+
+        // Step 3 form handling (Location Information)
+        document.getElementById('step3Form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const city = document.getElementById('city').value.trim();
+            const state = document.getElementById('state').value.trim();
+            const zipCode = document.getElementById('zipCode').value.trim();
+            const streetAddress = document.getElementById('streetAddress').value.trim();
+            
+            // Validation
+            if (!city || !state || !zipCode) {
+                alert('Please fill in all required location fields.');
+                return;
+            }
+            
+            // State validation (2-3 characters)
+            if (state.length < 2 || state.length > 3) {
+                alert('Please enter a valid state/province code (e.g., TX, CA, NY).');
+                return;
+            }
+            
+            // ZIP code validation (basic)
+            const zipRegex = /^[0-9]{5}(-[0-9]{4})?$|^[A-Z][0-9][A-Z] [0-9][A-Z][0-9]$/;
+            if (!zipRegex.test(zipCode)) {
+                alert('Please enter a valid ZIP/postal code.');
+                return;
+            }
+            
+            // Store data
+            onboardingData = {
+                ...onboardingData,
+                city: city,
+                state: state.toUpperCase(),
+                zipCode: zipCode,
+                streetAddress: streetAddress
+            };
+            
+            sessionStorage.setItem('onboardingData', JSON.stringify(onboardingData));
+            
+            // Transition to step 4
+            transitionToStep(4);
+        });
+
+        // Step 4 form handling (Resume Upload)
+        document.getElementById('step4Form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const fileInput = document.getElementById('file-input');
+            
+            if (!fileInput.files.length) {
+                alert('Please upload your resume to continue.');
+                return;
+            }
+            
+            // Store file info (in real app, you'd upload to server here)
+            const file = fileInput.files[0];
+            onboardingData = {
+                ...onboardingData,
+                resumeFileName: file.name,
+                resumeFileSize: file.size,
+                resumeFileType: file.type,
+                resumeSkipped: false
+            };
+            
+            sessionStorage.setItem('onboardingData', JSON.stringify(onboardingData));
+            
+            // Transition to step 5
+            transitionToStep(5);
+        });
+
+        // Skip resume functionality
+        document.getElementById('skipResume').addEventListener('click', function() {
+            // Store that resume was skipped
+            onboardingData = {
+                ...onboardingData,
+                resumeSkipped: true
+            };
+            
+            sessionStorage.setItem('onboardingData', JSON.stringify(onboardingData));
+            
+            // Transition to step 5
+            transitionToStep(5);
+        });
+
+        // Step 5 form handling (Legal Agreements)
+        document.getElementById('step5Form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const agreeToS = document.getElementById('agreeToS').checked;
+            const agreePrivacy = document.getElementById('agreePrivacy').checked;
+            const agreeConsent = document.getElementById('agreeConsent').checked;
+            
+            // Store data (no validation required now)
+            onboardingData = {
+                ...onboardingData,
+                agreeToS: agreeToS,
+                agreePrivacy: agreePrivacy,
+                agreeConsent: agreeConsent,
+                completedAt: new Date().toISOString()
+            };
+            
+            sessionStorage.setItem('onboardingData', JSON.stringify(onboardingData));
+            
+            // Start the loading sequence
+            startLoadingSequence();
+            
+            // Transition to step 6 (loading screen)
+            transitionToStep(6);
+        });
+
+        // Loading sequence with preset messages and timing
+        function startLoadingSequence() {
+            const loadingMessages = [
+                { message: "Creating your Interview Connect account...", duration: 5000, progress: 20 },
+                { message: "Setting up your Dice profile...", duration: 7000, progress: 45 },
+                { message: "Configuring Indeed automation...", duration: 6000, progress: 70 },
+                { message: "Preparing your job search dashboard...", duration: 5000, progress: 90 },
+                { message: "Almost done! Finalizing your setup...", duration: 3000, progress: 100 }
+            ];
+            
+            let currentMessageIndex = 0;
+            const messageElement = document.getElementById('loadingMessage');
+            const progressBar = document.getElementById('progressBar');
+            
+            function showNextMessage() {
+                if (currentMessageIndex < loadingMessages.length) {
+                    const current = loadingMessages[currentMessageIndex];
+                    
+                    // Update message
+                    messageElement.textContent = current.message;
+                    
+                    // Update progress bar
+                    progressBar.style.width = current.progress + '%';
+                    
+                    console.log(`Loading: ${current.message}`);
+                    
+                    currentMessageIndex++;
+                    
+                    // Schedule next message
+                    setTimeout(showNextMessage, current.duration);
+                } else {
+                    // All messages complete, redirect to homepage
+                    setTimeout(() => {
+                        console.log('Onboarding complete! Redirecting to dashboard...');
+                        // In real app: window.location.href = '/application-assistant';
+                        alert('Onboarding completed successfully! You would now be redirected to your dashboard.');
+                    }, 1000);
+                }
+            }
+            
+            // Start the sequence
+            showNextMessage();
+            
+            // Here you would also trigger the backend onboarding process
+            submitOnboardingData();
+        }
+        
+        function submitOnboardingData() {
+    console.log('Submitting onboarding data to backend...');
+    console.log('Final onboarding data:', onboardingData);
+    
+    // Actually send the POST request to backend
+    fetch('/complete_onboarding', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(onboardingData)
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Onboarding backend response:', data);
+        
+        if (data.status === 'success') {
+            // Update the loading message to show success
+            const messageElement = document.getElementById('loadingMessage');
+            const progressBar = document.getElementById('progressBar');
+            
+            messageElement.textContent = 'Setup complete! Redirecting to your dashboard...';
+            progressBar.style.width = '100%';
+            
+            // Redirect to dashboard after a short delay
+            setTimeout(() => {
+                window.location.href = data.redirect || '/dashboard';
+            }, 2000);
+            
+        } else if (data.status === 'partial') {
+            // Handle partial success
+            console.warn('Partial onboarding success:', data);
+            alert(`Onboarding partially completed. Some features may not be available: ${data.error}`);
+            
+            // Still redirect but with a warning
+            setTimeout(() => {
+                window.location.href = '/dashboard';
+            }, 3000);
+            
+        } else {
+            // Handle error
+            console.error('Onboarding failed:', data.error);
+            alert(`Onboarding failed: ${data.message || data.error}. Please try again or contact support.`);
+            
+            // Go back to legal agreements step
+            transitionToStep(5);
+        }
+    })
+    .catch(error => {
+        console.error('Error during onboarding:', error);
+        alert('An error occurred during setup. Please try again or contact support.');
+        
+        // Go back to legal agreements step
+        transitionToStep(5);
+    });
+}
+
+        // Back button functionality
+        document.getElementById('backToStep1').addEventListener('click', function() {
+            transitionToStep(1);
+        });
+
+        document.getElementById('backToStep2').addEventListener('click', function() {
+            transitionToStep(2);
+        });
+
+        document.getElementById('backToStep3').addEventListener('click', function() {
+            transitionToStep(3);
+        });
+
+        document.getElementById('backToStep4').addEventListener('click', function() {
+            transitionToStep(4);
+        });
+
+        // File upload functionality
+        const fileInput = document.getElementById('file-input');
+        const uploadSection = document.getElementById('uploadSection');
+        const uploadBtn = document.getElementById('uploadBtn');
+        const fileInfo = document.getElementById('fileInfo');
+        const fileName = document.getElementById('fileName');
+        const fileSize = document.getElementById('fileSize');
+        const removeFileBtn = document.getElementById('removeFile');
+        const step4ContinueBtn = document.getElementById('step4ContinueBtn');
+
+        // Upload button click
+        uploadBtn.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        // Upload section click
+        uploadSection.addEventListener('click', function() {
+            fileInput.click();
+        });
+
+        // File input change
+        fileInput.addEventListener('change', function() {
+            handleFileSelect(this.files[0]);
+        });
+
+        // Drag and drop functionality
+        uploadSection.addEventListener('dragover', function(e) {
+            e.preventDefault();
+            uploadSection.classList.add('dragover');
+        });
+
+        uploadSection.addEventListener('dragleave', function(e) {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+        });
+
+        uploadSection.addEventListener('drop', function(e) {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+            
+            const files = e.dataTransfer.files;
+            if (files.length > 0) {
+                handleFileSelect(files[0]);
+            }
+        });
+
+        // Handle file selection
+        function handleFileSelect(file) {
+            if (!file) return;
+            
+            // Validate file type
+            const allowedTypes = ['.pdf', '.doc', '.docx'];
+            const fileExtension = '.' + file.name.split('.').pop().toLowerCase();
+            
+            if (!allowedTypes.includes(fileExtension)) {
+                alert('Please upload a PDF, DOC, or DOCX file.');
+                return;
+            }
+            
+            // Validate file size (5MB limit)
+            const maxSize = 5 * 1024 * 1024; // 5MB in bytes
+            if (file.size > maxSize) {
+                alert('File size must be less than 5MB.');
+                return;
+            }
+            
+            // Show file info
+            fileName.textContent = file.name;
+            fileSize.textContent = formatFileSize(file.size);
+            fileInfo.classList.add('show');
+            
+            // Enable continue button
+            step4ContinueBtn.disabled = false;
+            step4ContinueBtn.textContent = 'Continue to Legal Agreements';
+            
+            // Update sessionStorage
+            onboardingData.resumeFile = {
+                name: file.name,
+                size: file.size,
+                type: file.type
+            };
+            sessionStorage.setItem('onboardingData', JSON.stringify(onboardingData));
+        }
+
+        // Remove file
+        removeFileBtn.addEventListener('click', function() {
+            fileInput.value = '';
+            fileInfo.classList.remove('show');
+            step4ContinueBtn.disabled = true;
+            step4ContinueBtn.textContent = 'Please Upload Your Resume';
+            
+            // Remove from sessionStorage
+            delete onboardingData.resumeFile;
+            sessionStorage.setItem('onboardingData', JSON.stringify(onboardingData));
+        });
+
+        // Format file size
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Legal checkbox functionality and validation
+        function updateSubmitButton() {
+            const agreeToS = document.getElementById('agreeToS').checked;
+            const agreePrivacy = document.getElementById('agreePrivacy').checked;
+            const agreeConsent = document.getElementById('agreeConsent').checked;
+            const submitBtn = document.getElementById('step5ContinueBtn');
+            
+            // Enable submit only when all are checked
+            if (agreeToS && agreePrivacy && agreeConsent) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Complete Setup & Continue';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.textContent = 'Please Accept All Terms';
+            }
+        }
+
+        // Add event listeners for legal checkboxes
+        document.getElementById('agreeToS').addEventListener('change', function() {
+            const checkbox = document.getElementById('tosCheckbox');
+            if (this.checked) {
+                checkbox.classList.add('checked');
+            } else {
+                checkbox.classList.remove('checked');
+            }
+            updateSubmitButton();
+        });
+
+        document.getElementById('agreePrivacy').addEventListener('change', function() {
+            const checkbox = document.getElementById('privacyCheckbox');
+            if (this.checked) {
+                checkbox.classList.add('checked');
+            } else {
+                checkbox.classList.remove('checked');
+            }
+            updateSubmitButton();
+        });
+
+        document.getElementById('agreeConsent').addEventListener('change', function() {
+            const checkbox = document.getElementById('consentCheckbox');
+            if (this.checked) {
+                checkbox.classList.add('checked');
+            } else {
+                checkbox.classList.remove('checked');
+            }
+            updateSubmitButton();
+        });
+
+        // Password validation
+        function isValidPassword(password) {
+            const requirements = {
+                length: password.length >= 8,
+                uppercase: /[A-Z]/.test(password),
+                lowercase: /[a-z]/.test(password),
+                number: /\d/.test(password)
+            };
+            
+            return Object.values(requirements).every(req => req);
+        }
+
+        // Real-time password validation (add after DOM is ready)
+        function setupPasswordValidation() {
+            const passwordField = document.getElementById('password');
+            if (passwordField) {
+                passwordField.addEventListener('input', function() {
+                    const password = this.value;
+                    
+                    // Update requirement indicators
+                    const reqLength = document.getElementById('req-length');
+                    const reqUpper = document.getElementById('req-uppercase');
+                    const reqLower = document.getElementById('req-lowercase');
+                    const reqNumber = document.getElementById('req-number');
+                    
+                    if (reqLength) reqLength.classList.toggle('valid', password.length >= 8);
+                    if (reqUpper) reqUpper.classList.toggle('valid', /[A-Z]/.test(password));
+                    if (reqLower) reqLower.classList.toggle('valid', /[a-z]/.test(password));
+                    if (reqNumber) reqNumber.classList.toggle('valid', /\d/.test(password));
+                });
+            }
+        }
+
+        // Call password validation setup when page loads
+        setupPasswordValidation();
+
+        // Phone number formatting
+        document.getElementById('phone').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length >= 10) {
+                value = value.substring(0, 10);
+                value = value.replace(/(\d{3})(\d{3})(\d{4})/, '($1) $2-$3');
+            } else if (value.length >= 6) {
+                value = value.replace(/(\d{3})(\d{3})/, '($1) $2-');
+            } else if (value.length >= 3) {
+                value = value.replace(/(\d{3})/, '($1) ');
+            }
+            e.target.value = value;
+        });
+
+        // State formatting (uppercase)
+        document.getElementById('state').addEventListener('input', function(e) {
+            e.target.value = e.target.value.toUpperCase();
+        });
+
+        // ZIP code formatting
+        document.getElementById('zipCode').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length > 5) {
+                value = value.substring(0, 5) + '-' + value.substring(5, 9);
+            }
+            e.target.value = value;
+        });
+
+        // Real-time validation feedback for all inputs
+        const inputs = document.querySelectorAll('input[required]');
+        inputs.forEach(input => {
+            input.addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    this.style.borderColor = '#dc3545';
+                } else {
+                    this.style.borderColor = '#28a745';
+                }
+            });
+            
+            input.addEventListener('input', function() {
+                if (this.value.trim() !== '') {
+                    this.style.borderColor = '#e1e5e9';
+                }
+            });
+        });
+
+        // Location auto-complete suggestions (basic implementation)
+        const cityInput = document.getElementById('city');
+        const stateInput = document.getElementById('state');
+        
+        cityInput.addEventListener('input', function() {
+            const value = this.value;
+            // Basic city suggestions - you could integrate with a real API
+            if (value.toLowerCase() === 'houston') {
+                stateInput.value = 'TX';
+            } else if (value.toLowerCase() === 'los angeles') {
+                stateInput.value = 'CA';
+            } else if (value.toLowerCase() === 'new york') {
+                stateInput.value = 'NY';
+            }
+        });
+    </script>
+</body>
+</html>

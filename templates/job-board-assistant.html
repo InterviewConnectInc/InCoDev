@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Board Assistant - Interview Connect</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: linear-gradient(135deg, #0066CC 0%, #004A99 100%);
+            min-height: 100vh;
+            display: flex;
+        }
+        .app-container { display: flex; width: 100%; height: 100vh; }
+        
+        /* Sidebar */
+        .sidebar {
+            width: 280px; background: white; box-shadow: 2px 0 10px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; z-index: 1000;
+        }
+        .sidebar-header {
+            padding: 30px 25px; border-bottom: 1px solid #e1e5e9;
+            background: linear-gradient(135deg, #0066CC 0%, #004A99 100%); color: white;
+        }
+        .logo-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+        .logo-container svg {
+            width: 120px;
+            height: 50px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        .sidebar-header h2 { font-size: 1.3rem; font-weight: 600; margin-bottom: 5px; }
+        .sidebar-header p { font-size: 0.9rem; opacity: 0.9; }
+        .sidebar-nav { flex: 1; padding: 20px 0; }
+        .nav-item {
+            display: block; padding: 15px 25px; color: #666; text-decoration: none;
+            font-weight: 500; transition: all 0.3s ease; border-left: 3px solid transparent;
+        }
+        .nav-item:hover { background: #E6F2FF; color: #0066CC; border-left-color: #0066CC; }
+        .nav-item.active { background: #E6F2FF; color: #0066CC; border-left-color: #0066CC; font-weight: 600; }
+        
+        /* Main Content */
+        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+        .top-bar {
+            background: white; padding: 15px 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .page-title { font-size: 1.5rem; font-weight: 600; color: #333; }
+        .logout-btn {
+            background: linear-gradient(135deg, #0066CC 0%, #004A99 100%);
+            color: white; border: none; padding: 10px 20px; border-radius: 8px;
+            font-weight: 500; cursor: pointer; transition: all 0.3s ease;
+        }
+        .logout-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 5px 15px rgba(0, 102, 204, 0.4);
+            background: linear-gradient(135deg, #0052A3 0%, #003D80 100%);
+        }
+        
+        .content-area { flex: 1; padding: 30px; overflow-y: auto; background: #fafbfc; }
+        .content-wrapper {
+            max-width: 800px; margin: 0 auto; background: white; border-radius: 15px;
+            padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        
+        /* Form Sections */
+        .form-header { text-align: center; margin-bottom: 40px; }
+        .form-header h1 { font-size: 2rem; color: #333; margin-bottom: 10px; font-weight: 600; }
+        .form-header p { color: #666; font-size: 1.1rem; }
+        
+        .upload-section {
+            border: 2px dashed #0066CC; border-radius: 12px; padding: 40px;
+            text-align: center; margin-bottom: 30px; background: #E6F2FF;
+        }
+        .upload-section h3 { color: #333; margin-bottom: 20px; font-size: 1.2rem; }
+        .file-input { display: none; }
+        .file-input-label {
+            display: inline-block; background: #0066CC; color: white; padding: 12px 24px;
+            border-radius: 8px; cursor: pointer; font-weight: 500; transition: all 0.3s ease;
+        }
+        .file-input-label:hover { background: #0052A3; transform: translateY(-1px); }
+
+        /* Industry Selection */
+        .industry-selection {
+            margin-bottom: 30px; padding: 25px; border: 2px solid #0066CC; border-radius: 12px; background: #E6F2FF;
+        }
+        .industry-selection h3 { color: #333; margin-bottom: 15px; font-size: 1.2rem; }
+        .industry-selection select {
+            width: 100%; padding: 12px 16px; border: 2px solid #0066CC; border-radius: 8px;
+            font-size: 16px; background: white; color: #333;
+        }
+        .industry-selection select:focus { 
+            outline: none; 
+            border-color: #004A99; 
+            box-shadow: 0 0 0 3px rgba(0, 102, 204, 0.1);
+        }
+        
+        /* Board Selection */
+        .board-selection { 
+            margin-bottom: 30px; 
+            display: none; /* Hidden by default, shown when industry is selected */
+        }
+        .board-selection h3 { margin-bottom: 15px; }
+        .board-selection-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        .board-checkbox {
+            display: flex;
+            align-items: center;
+            padding: 10px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .board-checkbox:hover {
+            border-color: #0066CC;
+            background: #E6F2FF;
+        }
+        .board-checkbox input[type="checkbox"] {
+            margin-right: 10px;
+        }
+        .board-checkbox.checked {
+            border-color: #0066CC;
+            background: #CCE0FF;
+        }
+        
+        .automation-info {
+            background: linear-gradient(135deg, #E6F2FF 0%, #CCE0FF 100%);
+            padding: 30px; border-radius: 12px; margin-bottom: 30px;
+            border: 1px solid #0066CC;
+        }
+        .automation-info h3 { color: #0066CC; margin-bottom: 15px; }
+        .automation-info ul { list-style: none; padding-left: 0; }
+        .automation-info li {
+            padding: 10px 0; display: flex; align-items: center;
+            border-bottom: 1px solid rgba(0, 102, 204, 0.2);
+        }
+        .automation-info li:last-child { border-bottom: none; }
+        .automation-info li::before {
+            content: '✓'; color: #28a745; font-weight: bold;
+            margin-right: 10px; font-size: 1.2rem;
+        }
+        
+        .run-assistant-section { text-align: center; margin-top: 40px; }
+        .run-assistant-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%); color: white;
+            border: none; padding: 18px 40px; border-radius: 12px; font-size: 1.1rem;
+            font-weight: 600; cursor: pointer; transition: all 0.3s ease; margin-right: 15px;
+        }
+        .run-assistant-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 25px rgba(40, 167, 69, 0.3);
+        }
+        .run-assistant-btn:disabled { background: #d1d5db; cursor: not-allowed; }
+
+        .stop-assistant-btn {
+            background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); color: white;
+            border: none; padding: 18px 40px; border-radius: 12px; font-size: 1.1rem;
+            font-weight: 600; cursor: pointer; transition: all 0.3s ease; display: none;
+        }
+        .stop-assistant-btn:hover { 
+            transform: translateY(-2px); 
+            box-shadow: 0 10px 25px rgba(220, 53, 69, 0.3);
+        }
+        
+        .status-message {
+            margin-top: 20px; padding: 15px; border-radius: 8px; display: none;
+        }
+        .status-message.show { display: block; }
+        .status-message.success { background: #d4edda; border: 1px solid #c3e6cb; color: #155724; }
+        .status-message.error { background: #f8d7da; border: 1px solid #f5c6cb; color: #721c24; }
+        .status-message.info { background: #d1ecf1; border: 1px solid #bee5eb; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-container">
+                    <!-- InCo Logo -->
+                    <svg viewBox="0 0 200 80" xmlns="http://www.w3.org/2000/svg">
+                        <text x="10" y="60" style="font-family: Arial, sans-serif; font-size: 60px; font-weight: bold; fill: white;">
+                            In<tspan style="fill: white;">Co</tspan>
+                        </text>
+                    </svg>
+                </div>
+                <h2>Welcome, {{ user_email.split('@')[0].title() }}</h2>
+                <p>{{ user_email }}</p>
+            </div>
+            <nav class="sidebar-nav">
+                 <a href="/dashboard" class="nav-item">Dashboard</a>
+                <a href="/application-assistant" class="nav-item">Application Assistant</a>
+                <a href="/job-board-assistant" class="nav-item active">Job Board Assistant</a>
+                <a href="/resume-assistant" class="nav-item">Resume Assistant Coming Soon!</a>
+            </nav>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="top-bar">
+                <h1 class="page-title">Job Board Assistant</h1>
+                <button class="logout-btn" onclick="logout()">Logout</button>
+            </div>
+
+            <div class="content-area">
+                <div class="content-wrapper">
+                    <div class="form-header">
+                        <h1>Job Board Submission Assistant</h1>
+                        <p>Automatically submit your profile to top recruiting agencies</p>
+                    </div>
+
+                    <div class="automation-info">
+                        <h3>📋 What this assistant does:</h3>
+                        <ul>
+                            <li>Submits your profile to industry-specific job boards and Agencies</li>
+                        </ul>
+                    </div>
+
+                    <form id="jobBoardForm" enctype="multipart/form-data">
+                        <!-- Industry Selection -->
+                        <div class="industry-selection">
+                            <h3>Select Industry:</h3>
+                            <select id="industrySelect" name="industry" required onchange="updateBoardList()">
+                                <option value="">Choose your industry...</option>
+                                <option value="Manufacturing">Manufacturing</option>
+                                <option value="Real Estate">Real Estate</option>
+                                <option value="Healthcare">Healthcare</option>
+                                <option value="Technology">Technology/IT</option>
+                                <option value="Finance">Finance</option>
+                                <option value="Retail">Retail</option>
+                                <option value="Hospitality">Hospitality</option>
+                                <option value="Education">Education</option>
+                                <option value="Government">Government</option>
+                                <option value="Nonprofit">Nonprofit</option>
+                                <option value="General">General/Multi-Industry</option>
+                            </select>
+                        </div>
+
+                        <!-- Board Selection (will be populated dynamically) -->
+                        <div class="board-selection" id="boardSelection" style="display: none;">
+                            <h3>Available Job Boards:</h3>
+                            <div id="boardList" class="board-selection-grid">
+                                <!-- Boards will be populated here based on selected industry -->
+                            </div>
+                            <p style="color: #666; margin-top: 10px; font-size: 0.9rem;">
+                                <em>Note: All available boards for your selected industry will be processed automatically.</em>
+                            </p>
+                        </div>
+
+                        <div class="upload-section">
+                            <h3>Resume Upload</h3>
+                            <input type="file" id="resumeFile" name="resume" class="file-input" accept=".pdf,.doc,.docx">
+                            <label for="resumeFile" class="file-input-label">Choose Resume File</label>
+                            <p style="margin-top: 10px; color: #666;">Upload your resume to include with submissions</p>
+                        </div>
+
+                        <div class="run-assistant-section">
+                            <button type="button" class="run-assistant-btn" onclick="runJobBoardAssistant()">
+                                🎯 Start Job Board Assistant
+                            </button>
+                            <button type="button" class="stop-assistant-btn" onclick="stopJobBoardAssistant()">
+                                🛑 Stop Assistant
+                            </button>
+                            <p style="color: #666; margin-top: 15px;">
+                                Submit your profile to selected job boards
+                            </p>
+                        </div>
+
+                        <div class="status-message" id="statusMessage"></div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showStatus(message, type) {
+            const status = document.getElementById('statusMessage');
+            status.innerHTML = message;
+            status.className = `status-message show ${type}`;
+        }
+
+        function updateBoardList() {
+            const industry = document.getElementById('industrySelect').value;
+            const boardSelection = document.getElementById('boardSelection');
+            const boardList = document.getElementById('boardList');
+            
+            if (!industry) {
+                boardSelection.style.display = 'none';
+                return;
+            }
+            
+            boardSelection.style.display = 'block';
+            boardList.innerHTML = '<p>Loading available boards...</p>';
+            
+            // In a real implementation, this would fetch from the server
+            // For now, we'll just show a message
+            boardList.innerHTML = `
+                <p style="color: #666; padding: 20px; text-align: center;">
+                    Boards for ${industry} industry will be loaded automatically when you start the assistant.
+                </p>
+            `;
+        }
+
+        function runJobBoardAssistant() {
+            const btn = document.querySelector('.run-assistant-btn');
+            const stopBtn = document.querySelector('.stop-assistant-btn');
+            const formData = new FormData();
+            
+            // Get selected industry
+            const selectedIndustry = document.getElementById('industrySelect').value;
+            if (!selectedIndustry) {
+                alert('Please select an industry!');
+                return;
+            }
+            formData.append('industry', selectedIndustry);
+            
+            // Get resume file if uploaded
+            const resumeFile = document.getElementById('resumeFile').files[0];
+            if (resumeFile) {
+                formData.append('resume', resumeFile);
+            }
+            
+            btn.disabled = true;
+            btn.textContent = 'Starting Assistant...';
+            stopBtn.style.display = 'inline-block';
+            
+            fetch('/start_job_board_assistant', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(err => Promise.reject(err));
+                }
+                return response.json();
+            })
+            .then(result => {
+                if (result.status === 'success') {
+                    showStatus(`✅ ${result.message}`, 'success');
+                    btn.textContent = '🔄 Assistant Running';
+                    btn.style.background = '#ffc107';
+                    
+                    // Show additional info if available
+                    if (result.data && result.data.selected_boards) {
+                        const boardCount = result.data.selected_boards.length;
+                        showStatus(
+                            `✅ Job Board Assistant started!<br>
+                            Industry: ${selectedIndustry}<br>
+                            Processing ${boardCount} board(s)<br>
+                            Status: ${result.data.automation_status}`,
+                            'success'
+                        );
+                    }
+                } else {
+                    showStatus('❌ Failed to start: ' + result.message, 'error');
+                    btn.disabled = false;
+                    btn.textContent = '🎯 Start Job Board Assistant';
+                    stopBtn.style.display = 'none';
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                showStatus('❌ ' + (error.message || 'Connection error'), 'error');
+                btn.disabled = false;
+                btn.textContent = '🎯 Start Job Board Assistant';
+                stopBtn.style.display = 'none';
+            });
+        }
+
+        function stopJobBoardAssistant() {
+            const btn = document.querySelector('.run-assistant-btn');
+            const stopBtn = document.querySelector('.stop-assistant-btn');
+            
+            fetch('/stop_job_board_assistant', {
+                method: 'POST'
+            })
+            .then(response => response.json())
+            .then(result => {
+                if (result.status === 'success') {
+                    showStatus('🛑 Job Board Assistant stopped', 'success');
+                    btn.disabled = false;
+                    btn.textContent = '🎯 Start Job Board Assistant';
+                    btn.style.background = 'linear-gradient(135deg, #28a745 0%, #20c997 100%)';
+                    stopBtn.style.display = 'none';
+                } else {
+                    showStatus('❌ Failed to stop: ' + result.message, 'error');
+                }
+            })
+            .catch(error => {
+                showStatus('❌ Connection error while stopping', 'error');
+            });
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                fetch('/logout').then(() => window.location.href = '/');
+            }
+        }
+
+        // File upload feedback
+        document.getElementById('resumeFile').addEventListener('change', function(e) {
+            const label = document.querySelector('.file-input-label');
+            if (e.target.files.length > 0) {
+                label.textContent = '📎 ' + e.target.files[0].name;
+                label.style.background = '#28a745';
+            } else {
+                label.textContent = 'Choose Resume File';
+                label.style.background = '#0066CC';
+            }
+        });
+    </script>
+</body>
+</html>
